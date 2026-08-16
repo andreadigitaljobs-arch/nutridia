@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { getMealTypeLabel } from '@/lib/constants'
 import { suggestMeals, type MealSuggestion } from '@/lib/ai'
 import type { MealType } from '@/types/database'
+import AddFoodModal from '@/components/AddFoodModal'
 import {
   ChevronLeftIcon,
   LeafIcon,
@@ -70,6 +71,7 @@ export default function MealOptions() {
   const [aiSuggestions, setAiSuggestions] = useState<MealSuggestion[]>([])
   const [loadingAI, setLoadingAI] = useState(false)
   const [aiError, setAiError] = useState<string | null>(null)
+  const [showAddFood, setShowAddFood] = useState(false)
   const type = (mealType as MealType) ?? 'breakfast'
   const today = new Date().toISOString().split('T')[0]
 
@@ -270,6 +272,19 @@ export default function MealOptions() {
           )}
         </div>
 
+        <div className="mt-3">
+          <button
+            onClick={() => setShowAddFood(true)}
+            className="w-full bg-white border-2 border-dashed border-card-border rounded-2xl p-4 flex items-center justify-center gap-3 text-carbon/50 font-medium text-sm active:scale-[0.98] transition-transform hover:border-sage/30 hover:text-sage"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v8M8 12h8"/>
+            </svg>
+            Agregar alimento
+          </button>
+        </div>
+
         {aiSuggestions.length > 0 && (
           <div className="mt-6 space-y-3">
             <h3 className="font-heading text-sm font-semibold text-sage flex items-center gap-2">
@@ -435,6 +450,12 @@ export default function MealOptions() {
           </button>
         </div>
       </nav>
+
+      <AddFoodModal
+        isOpen={showAddFood}
+        onClose={() => setShowAddFood(false)}
+        onFoodAdded={() => { fetchOptions() }}
+      />
     </div>
   )
 }

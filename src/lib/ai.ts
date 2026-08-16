@@ -115,6 +115,33 @@ Sin texto adicional.`
   }
 }
 
+export interface NutritionEstimate {
+  name: string
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+  default_unit: string
+}
+
+export async function estimateNutrition(foodName: string): Promise<NutritionEstimate | null> {
+  const prompt = `Estima los valores nutricionales por 100g de este alimento: "${foodName}".
+Responde SOLO en JSON valido: {"name":"...","calories":0,"protein":0,"carbs":0,"fat":0,"default_unit":"g"}
+Sin texto adicional. Usa valores aproximados pero realistas.`
+
+  const content = await groqChat([
+    { role: 'system', content: 'Eres un nutricionista experto. Responde siempre en JSON valido.' },
+    { role: 'user', content: prompt },
+  ], 'llama-3.1-8b-instant')
+
+  try {
+    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    return jsonMatch ? JSON.parse(jsonMatch[0]) : null
+  } catch {
+    return null
+  }
+}
+
 export async function getNutritionAdvice(
   question: string,
   userProfile: { name: string; weight?: number; height?: number; calories?: number }

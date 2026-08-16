@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BookmarkIcon, HeartIcon, CheckIcon, XIcon, ChevronRightIcon, UserIcon, BowlIcon } from '@/components/Icons'
+import { BookmarkIcon, HeartIcon, CheckIcon, XIcon, ChevronRightIcon, UserIcon, BowlIcon, PlusIcon } from '@/components/Icons'
 import { useAuth } from '@/providers/AuthProvider'
 import { supabase } from '@/lib/supabase'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import AddFoodModal from '@/components/AddFoodModal'
 
 interface CollectionEntry {
   id: string
@@ -28,31 +29,33 @@ export default function Collection() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('to_try')
   const [items, setItems] = useState<CollectionEntry[]>([])
+  const [showAddFood, setShowAddFood] = useState(false)
+
+  async function fetchData() {
+    if (!user) return
+    setLoading(true)
+    const { data: items } = await supabase
+      .from('collection_items')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+
+    const optionIds = (items ?? []).map(i => i.option_id).filter(Boolean)
+    const { data: options } = await supabase
+      .from('daily_menu_options')
+      .select('id, name, estimated_calories')
+      .in('id', optionIds)
+
+    const itemsWithNames = (items ?? []).map(item => ({
+      ...item,
+      option: options?.find(o => o.id === item.option_id) ?? null
+    })) as CollectionEntry[]
+
+    setItems(itemsWithNames)
+    setLoading(false)
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      if (!user) return
-      setLoading(true)
-      const { data: items } = await supabase
-        .from('collection_items')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      const optionIds = (items ?? []).map(i => i.option_id).filter(Boolean)
-      const { data: options } = await supabase
-        .from('daily_menu_options')
-        .select('id, name, estimated_calories')
-        .in('id', optionIds)
-
-      const itemsWithNames = (items ?? []).map(item => ({
-        ...item,
-        option: options?.find(o => o.id === item.option_id) ?? null
-      })) as CollectionEntry[]
-
-      setItems(itemsWithNames)
-      setLoading(false)
-    }
     fetchData()
   }, [user])
 
@@ -83,6 +86,16 @@ export default function Collection() {
       <p className="text-sm text-carbon/50 mt-1">
         Tus opciones guardadas para más adelante.
       </p>
+
+      <div className="mt-4">
+        <button
+          onClick={() => setShowAddFood(true)}
+          className="w-full bg-white border-2 border-dashed border-card-border rounded-2xl p-4 flex items-center justify-center gap-3 text-carbon/50 font-medium text-sm active:scale-[0.98] transition-transform hover:border-sage/30 hover:text-sage"
+        >
+          <PlusIcon size={20} />
+          Agregar alimento personalizado
+        </button>
+      </div>
 
       <div className="grid grid-cols-2 gap-2 mt-6">
         {tabs.map((tab) => {
@@ -192,6 +205,12 @@ export default function Collection() {
           </div>
         </div>
       </div>
+
+      <AddFoodModal
+        isOpen={showAddFood}
+        onClose={() => setShowAddFood(false)}
+        onFoodAdded={() => { fetchData() }}
+      />
     </div>
   )
 }
