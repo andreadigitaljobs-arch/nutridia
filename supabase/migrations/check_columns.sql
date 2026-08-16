@@ -1,0 +1,15 @@
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'profiles' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'nutrition_plans' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'meal_rules' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'user_food_rules' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'food_portions' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'user_food_preferences' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'daily_menus' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'daily_menu_options' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'meal_option_items' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'meal_logs' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'collection_items' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'body_assessments' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'user_available_foods' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'weight_history' ORDER BY ordinal_position;
+SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'nutridia' AND table_name = 'hydration_logs' ORDER BY ordinal_position;
