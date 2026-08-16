@@ -152,6 +152,17 @@ export default function Onboarding() {
   const next = () => { setStep((s) => Math.min(s + 1, 7)); setStepKey(k => k + 1) }
   const prev = () => { setStep((s) => Math.max(s - 1, 1)); setStepKey(k => k + 1) }
 
+  const [dbFoods, setDbFoods] = useState<string[]>([])
+  useEffect(() => {
+    supabase.from('foods').select('name').order('name').then(({ data: foods }) => {
+      if (foods && foods.length > 0) {
+        const names = foods.map(f => f.name)
+        setDbFoods(names)
+        setData(d => d.allowed_foods.length === 0 ? { ...d, allowed_foods: names } : d)
+      }
+    })
+  }, [])
+
   const totalMeals = Number(data.number_of_meals) || 3
 
   const handleSubmit = async () => {
@@ -572,7 +583,7 @@ export default function Onboarding() {
         )}
 
         {step === 4 && (
-          <FoodTabStep data={data} addFood={addFood} removeFood={removeFood} />
+          <FoodTabStep data={data} addFood={addFood} removeFood={removeFood} dbFoods={dbFoods} />
         )}
 
         {step === 5 && (
@@ -781,25 +792,16 @@ function FoodTabStep({
   data,
   addFood,
   removeFood,
+  dbFoods,
 }: {
   data: OnboardingData
   addFood: (list: 'allowed_foods' | 'prohibited_foods' | 'limited_foods', food: string) => void
   removeFood: (list: 'allowed_foods' | 'prohibited_foods' | 'limited_foods', idx: number) => void
+  dbFoods: string[]
 }) {
   const [tab, setTab] = useState<'allowed' | 'prohibited' | 'limited'>('allowed')
   const [input, setInput] = useState('')
   const [search, setSearch] = useState('')
-  const [dbFoods, setDbFoods] = useState<string[]>([])
-
-  useEffect(() => {
-    async function fetchFoods() {
-      const { data } = await supabase.from('foods').select('name').order('name')
-      if (data && data.length > 0) {
-        setDbFoods(data.map(f => f.name))
-      }
-    }
-    fetchFoods()
-  }, [])
 
   const tabs = [
     { key: 'allowed' as const, label: 'Permitidos', list: 'allowed_foods' as const, activeBg: 'bg-sage text-white', inactiveBg: 'text-carbon/40' },
