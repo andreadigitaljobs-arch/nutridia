@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/providers/AuthProvider'
 import { supabase } from '@/lib/supabase'
@@ -34,7 +34,7 @@ const COMMON_RESTRICTIONS = [
   'Vegano',
 ]
 
-const COMMON_FOODS = [
+const COMMON_FOODS_FALLBACK = [
   'Pollo', 'Res', 'Cerdo', 'Pescado', 'Tofu', 'Huevo',
   'Arroz', 'Pasta', 'Pan', 'Papa', 'Camote', 'Avena',
   'Manzana', 'Plátano', 'Naranja', 'Fresa', 'Mango', 'Uva',
@@ -789,6 +789,17 @@ function FoodTabStep({
   const [tab, setTab] = useState<'allowed' | 'prohibited' | 'limited'>('allowed')
   const [input, setInput] = useState('')
   const [search, setSearch] = useState('')
+  const [dbFoods, setDbFoods] = useState<string[]>([])
+
+  useEffect(() => {
+    async function fetchFoods() {
+      const { data } = await supabase.from('foods').select('name').order('name')
+      if (data && data.length > 0) {
+        setDbFoods(data.map(f => f.name))
+      }
+    }
+    fetchFoods()
+  }, [])
 
   const tabs = [
     { key: 'allowed' as const, label: 'Permitidos', list: 'allowed_foods' as const, activeBg: 'bg-sage text-white', inactiveBg: 'text-carbon/40' },
@@ -799,7 +810,8 @@ function FoodTabStep({
   const currentTab = tabs.find((t) => t.key === tab)!
   const currentList = data[currentTab.list]
 
-  const filteredFoods = COMMON_FOODS.filter(
+  const allFoods = dbFoods.length > 0 ? dbFoods : COMMON_FOODS_FALLBACK
+  const filteredFoods = allFoods.filter(
     (f) =>
       f.toLowerCase().includes(search.toLowerCase()) &&
       !currentList.includes(f)
