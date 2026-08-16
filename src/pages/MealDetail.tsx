@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/providers/AuthProvider'
 import { getMealTypeLabel } from '@/lib/constants'
+import FoodAlternatives from '@/components/FoodAlternatives'
 import {
   ChevronLeftIcon,
   HeartIcon,
@@ -70,6 +71,8 @@ export default function MealDetail() {
   const [loading, setLoading] = useState(true)
   const [option, setOption] = useState<MealOptionDetail | null>(null)
   const [feedback, setFeedback] = useState<string | null>(null)
+  const [showAlternatives, setShowAlternatives] = useState(false)
+  const [selectedAlternative, setSelectedAlternative] = useState<{ foodName: string; alternative: string } | null>(null)
 
   const fetchOption = useCallback(async () => {
     if (!id) return
@@ -223,6 +226,7 @@ export default function MealDetail() {
           {option.meal_option_items?.map((item: MealOptionItem, i: number) => {
             const IconComponent = getCategoryIcon(item.category)
             const circleClass = getCategoryCircleClass(item.category)
+            const replaced = selectedAlternative?.foodName === item.food_name
             return (
               <div
                 key={i}
@@ -237,11 +241,26 @@ export default function MealDetail() {
                   <p className="text-xs font-semibold text-carbon">{item.category}</p>
                   <p className="text-xs text-carbon/50">{item.amount} {item.unit}</p>
                 </div>
-                <p className="text-sm text-carbon/70 truncate">{item.food_name}</p>
+                {replaced ? (
+                  <div className="flex flex-col items-end">
+                    <span className="text-xs text-carbon/40 line-through">{item.food_name}</span>
+                    <span className="text-sm font-semibold text-sage">{selectedAlternative.alternative}</span>
+                  </div>
+                ) : (
+                  <p className="text-sm text-carbon/70 truncate">{item.food_name}</p>
+                )}
               </div>
             )
           })}
         </div>
+
+        <button
+          onClick={() => setShowAlternatives(true)}
+          className="w-full mt-4 py-3 border-2 border-dashed border-sage/40 rounded-xl text-sage text-sm font-medium flex items-center justify-center gap-2 hover:bg-sage/5 transition-colors"
+        >
+          <LeafIcon size={18} />
+          No tengo este alimento
+        </button>
 
         <h2 className="text-lg font-semibold text-carbon mt-6 mb-3" style={{ fontFamily: 'Poppins, sans-serif' }}>
           Preparacion
@@ -289,6 +308,14 @@ export default function MealDetail() {
         >
           No me provoca
         </button>
+      {option.meal_option_items?.[0] && (
+        <FoodAlternatives
+          foodName={selectedAlternative?.foodName ?? option.meal_option_items[0].food_name}
+          isOpen={showAlternatives}
+          onClose={() => setShowAlternatives(false)}
+          onSelect={(alt) => setSelectedAlternative({ foodName: option.meal_option_items![0].food_name, alternative: alt.alternative })}
+        />
+      )}
       </div>
     </div>
   )

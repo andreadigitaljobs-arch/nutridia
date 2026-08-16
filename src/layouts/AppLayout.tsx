@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import BottomNavigation from '@/components/BottomNavigation'
+import Notifications from '@/components/Notifications'
 
 export default function AppLayout() {
   return (
@@ -7,6 +8,7 @@ export default function AppLayout() {
       <div className="pb-20">
         <Outlet />
       </div>
+      <Notifications />
       <BottomNavigation />
     </div>
   )

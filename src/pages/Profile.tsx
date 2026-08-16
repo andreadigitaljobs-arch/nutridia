@@ -209,6 +209,29 @@ export default function Profile() {
         <ChevronRightIcon className="text-carbon/30 shrink-0" size={20} />
       </div>
 
+      {[
+        { label: 'Plan semanal', path: '/weekly-plan' },
+        { label: 'Comidas rapidas', path: '/quick-meals' },
+        { label: 'Agua', path: '/water' },
+        { label: 'Medidas corporales', path: '/body-measures' },
+        { label: 'Metas semanales', path: '/weekly-goals' },
+        { label: 'Consejos nutricionales', path: '/advice' },
+        { label: 'Fotos de progreso', path: '/progress-photos' },
+        { label: 'Modo facil', path: '/easy' },
+        { label: 'Reporte', path: '/report' },
+      ].map((item) => (
+        <div
+          key={item.path}
+          className="mt-3 bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3 cursor-pointer"
+          onClick={() => navigate(item.path)}
+        >
+          <div className="flex-1 min-w-0">
+            <p className="font-heading font-semibold text-carbon">{item.label}</p>
+          </div>
+          <ChevronRightIcon className="text-carbon/30 shrink-0" size={20} />
+        </div>
+      ))}
+
       <button onClick={() => navigate('/profile/plan')} className="w-full mt-6 h-14 flex items-center justify-center gap-2 border border-sage text-sage font-medium rounded-xl hover:bg-sage/5 transition-colors">
         <EditIcon size={18} />
         Editar plan

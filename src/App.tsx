@@ -17,6 +17,15 @@ import ProfileFoods from '@/pages/ProfileFoods'
 import ProfileRestrictions from '@/pages/ProfileRestrictions'
 import ProfileAssessments from '@/pages/ProfileAssessments'
 import History from '@/pages/History'
+import QuickMeals from '@/pages/QuickMeals'
+import WaterTracker from '@/pages/WaterTracker'
+import WeeklyPlan from '@/pages/WeeklyPlan'
+import BodyMeasures from '@/pages/BodyMeasures'
+import WeeklyGoals from '@/pages/WeeklyGoals'
+import NutritionAdvice from '@/pages/NutritionAdvice'
+import ProgressPhotos from '@/pages/ProgressPhotos'
+import EasyMode from '@/pages/EasyMode'
+import NutritionistReport from '@/pages/NutritionistReport'
 import Skeleton from '@/components/Skeleton'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -76,9 +85,18 @@ function AppRoutes() {
       <Route path="/profile/foods" element={<ProtectedRoute><ProfileFoods /></ProtectedRoute>} />
       <Route path="/profile/restrictions" element={<ProtectedRoute><ProfileRestrictions /></ProtectedRoute>} />
       <Route path="/profile/assessments" element={<ProtectedRoute><ProfileAssessments /></ProtectedRoute>} />
-      <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+        <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+      <Route path="/quick-meals" element={<ProtectedRoute><QuickMeals /></ProtectedRoute>} />
+      <Route path="/water" element={<ProtectedRoute><WaterTracker /></ProtectedRoute>} />
+        <Route path="/weekly-plan" element={<ProtectedRoute><WeeklyPlan /></ProtectedRoute>} />
+        <Route path="/body-measures" element={<ProtectedRoute><BodyMeasures /></ProtectedRoute>} />
+        <Route path="/weekly-goals" element={<ProtectedRoute><WeeklyGoals /></ProtectedRoute>} />
+        <Route path="/advice" element={<ProtectedRoute><NutritionAdvice /></ProtectedRoute>} />
+        <Route path="/progress-photos" element={<ProtectedRoute><ProgressPhotos /></ProtectedRoute>} />
+        <Route path="/easy" element={<ProtectedRoute><EasyMode /></ProtectedRoute>} />
+        <Route path="/report" element={<ProtectedRoute><NutritionistReport /></ProtectedRoute>} />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

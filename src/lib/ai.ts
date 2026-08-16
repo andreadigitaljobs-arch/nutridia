@@ -156,3 +156,105 @@ export async function getNutritionAdvice(
 
   return content
 }
+
+export interface WeeklyMealPlan {
+  days: {
+    day: string
+    meals: {
+      type: string
+      name: string
+      foods: { name: string; amount: string; grams: number }[]
+      calories: number
+    }[]
+  }[]
+}
+
+export async function generateWeeklyMealPlan(
+  calorieTarget: number,
+  allowedFoods: string[],
+  restrictions: string[] = []
+): Promise<WeeklyMealPlan | null> {
+  const prompt = `Genera un plan de comidas semanal para una persona con ${calorieTarget} kcal/dia.
+Alimentos permitidos: ${allowedFoods.slice(0, 30).join(', ')}
+${restrictions.length > 0 ? `Restricciones: ${restrictions.join(', ')}` : ''}
+
+Cada dia tiene: Desayuno (3 proteinas + 1 fruta + 1 carbohidrato), Almuerzo (4 proteinas + 1 carbohidrato + 1 aguacate), Merienda (2 proteinas), Cena (4 proteinas + 1 ensalada).
+1 racion de proteina = 30g. 1 racion de carbohidrato = la porcion indicada en la lista.
+
+Responde SOLO en JSON valido: {"days":[{"day":"Lunes","meals":[{"type":"Desayuno","name":"...","foods":[{"name":"...","amount":"...","grams":0}],"calories":0}]}]}
+Sin texto adicional.`
+
+  const content = await groqChat([
+    { role: 'system', content: 'Eres un nutricionista experto en planes de dieta. Responde siempre en JSON valido.' },
+    { role: 'user', content: prompt },
+  ])
+
+  try {
+    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    return jsonMatch ? JSON.parse(jsonMatch[0]) : null
+  } catch {
+    return null
+  }
+}
+
+export interface FoodAlternative {
+  original: string
+  alternative: string
+  reason: string
+  calories: number
+  protein: number
+}
+
+export async function findFoodAlternatives(
+  foodName: string,
+  allowedFoods: string[]
+): Promise<FoodAlternative[]> {
+  const prompt = `El usuario quiere un alimento similar a "${foodName}" pero no lo tiene disponible.
+Alimentos que si tiene: ${allowedFoods.slice(0, 20).join(', ')}
+Sugiere 3 alternativas similares en propiedades nutricionales.
+Responde SOLO en JSON: [{"original":"${foodName}","alternative":"...","reason":"...","calories":0,"protein":0}]
+Sin texto adicional.`
+
+  const content = await groqChat([
+    { role: 'system', content: 'Eres un nutricionista. Responde siempre en JSON valido.' },
+    { role: 'user', content: prompt },
+  ])
+
+  try {
+    const jsonMatch = content.match(/\[[\s\S]*\]/)
+    return jsonMatch ? JSON.parse(jsonMatch[0]) : []
+  } catch {
+    return []
+  }
+}
+
+export interface ShoppingItem {
+  name: string
+  category: string
+  amount: string
+}
+
+export async function generateShoppingList(
+  weeklyPlan: WeeklyMealPlan
+): Promise<ShoppingItem[]> {
+  const mealsStr = weeklyPlan.days.flatMap(d => d.meals.map(m => `${m.name}: ${m.foods.map(f => `${f.name} ${f.amount}`).join(', ')}`)).join('\n')
+
+  const prompt = `Basado en este plan semanal, genera una lista de compras agrupada por categoria:
+${mealsStr}
+
+Responde SOLO en JSON: [{"name":"...","category":"...","amount":"..."}]
+Categorias: Proteinas, Carbohidratos, Frutas, Vegetales, Lacteos, Grasas, Otros.
+Sin texto adicional.`
+
+  const content = await groqChat([
+    { role: 'system', content: 'Eres un asistente de compras. Responde siempre en JSON valido.' },
+    { role: 'user', content: prompt },
+  ])
+
+  try {
+    const jsonMatch = content.match(/\[[\s\S]*\]/)
+    return jsonMatch ? JSON.parse(jsonMatch[0]) : []
+  } catch {
+    return []
+  }
+}
