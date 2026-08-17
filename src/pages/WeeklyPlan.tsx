@@ -121,7 +121,7 @@ export default function WeeklyPlan() {
 
   return (
     <div className="min-h-screen bg-cream pb-4 animate-fade-in">
-      <header className="bg-white border-b border-card-border sticky top-0 z-10">
+      <header className="bg-cream border-b border-card-border/50 sticky top-0 z-10">
         <div className="px-4 py-4 flex items-center justify-between">
           <img src="/brand/logo-horizontal.png" alt="NutriDia" className="w-32" />
           <button

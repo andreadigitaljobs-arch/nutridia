@@ -250,7 +250,7 @@ export default function Today() {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream pb-4">
-        <header className="bg-white border-b border-card-border sticky top-0 z-10">
+      <header className="bg-cream border-b border-card-border/50 sticky top-0 z-10">
           <div className="px-4 py-4 flex items-center justify-between">
             <div className="w-32 h-8 bg-card-border rounded animate-pulse" />
             <div className="w-10 h-10 bg-card-border rounded-full animate-pulse" />
