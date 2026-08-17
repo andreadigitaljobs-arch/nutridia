@@ -86,7 +86,7 @@ const YAJAIRA_PRESET: OnboardingData = {
     { meal: 'Cena', category: 'protein', required_servings: '4' },
     { meal: 'Cena', category: 'salad', required_servings: '1' },
   ],
-  allowed_foods: ['Pollo', 'Res', 'Pescado', 'Huevo', 'Atún', 'Tofu', 'Arroz', 'Papa', 'Camote', 'Avena', 'Plátano', 'Manzana', 'Naranja', 'Fresa', 'Lechuga', 'Tomate', 'Pepino', 'Brócoli', 'Zanahoria', 'Espinaca'],
+  allowed_foods: [],
   prohibited_foods: ['Leche', 'Yogurt', 'Queso', 'Mantequilla', 'Nuez', 'Almendra'],
   limited_foods: ['Aguacate', 'Aceite de oliva'],
   portions: [
@@ -154,11 +154,20 @@ export default function Onboarding() {
 
   const [dbFoods, setDbFoods] = useState<string[]>([])
   useEffect(() => {
-    supabase.from('foods').select('name').order('name').then(({ data: foods }) => {
+    supabase.from('foods').select('name').order('name').then(({ data: foods, error }) => {
+      if (error) {
+        console.error('Error fetching foods:', error)
+        setDbFoods(COMMON_FOODS_FALLBACK)
+        setData(d => ({ ...d, allowed_foods: COMMON_FOODS_FALLBACK }))
+        return
+      }
       if (foods && foods.length > 0) {
         const names = foods.map(f => f.name)
         setDbFoods(names)
-        setData(d => d.allowed_foods.length === 0 ? { ...d, allowed_foods: names } : d)
+        setData(d => ({ ...d, allowed_foods: names }))
+      } else {
+        setDbFoods(COMMON_FOODS_FALLBACK)
+        setData(d => ({ ...d, allowed_foods: COMMON_FOODS_FALLBACK }))
       }
     })
   }, [])
