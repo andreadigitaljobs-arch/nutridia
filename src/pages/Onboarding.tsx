@@ -98,7 +98,7 @@ const YAJAIRA_PRESET: OnboardingData = {
     { meal: 'Cena', category: 'protein', required_servings: '4' },
     { meal: 'Cena', category: 'salad', required_servings: '1' },
   ],
-  allowed_foods: [],
+  allowed_foods: [...COMMON_FOODS_FALLBACK],
   prohibited_foods: ['Leche', 'Yogurt', 'Queso', 'Mantequilla', 'Nuez', 'Almendra'],
   limited_foods: ['Aguacate', 'Aceite de oliva'],
   portions: [
@@ -142,7 +142,7 @@ const initialState: OnboardingData = {
   number_of_meals: '3',
   meal_names: ['Desayuno', 'Comida', 'Cena'],
   meal_rules: [],
-  allowed_foods: [],
+  allowed_foods: [...COMMON_FOODS_FALLBACK],
   prohibited_foods: [],
   limited_foods: [],
   portions: [],
