@@ -37,7 +37,7 @@ export default function EasyMode() {
 
   return (
     <div className="min-h-screen bg-cream flex flex-col items-center justify-center px-6 animate-fade-in">
-      <img src="/brand/logo-horizontal.png" alt="Nutri Dia" className="w-40 mb-12" />
+      <img src="/brand/logo-horizontal.png" alt="Nutri Dia" className="w-32 mb-12" />
 
       <div className="w-full max-w-sm space-y-4">
         {buttons.map((btn) => {

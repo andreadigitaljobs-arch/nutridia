@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BookmarkIcon, HeartIcon, CheckIcon, XIcon, ChevronRightIcon, UserIcon, BowlIcon, PlusIcon } from '@/components/Icons'
+import { BookmarkIcon, HeartIcon, CheckIcon, XIcon, ChevronRightIcon, BellIcon, BowlIcon, PlusIcon } from '@/components/Icons'
 import { useAuth } from '@/providers/AuthProvider'
 import { supabase } from '@/lib/supabase'
 import { formatDistanceToNow } from 'date-fns'
@@ -77,9 +77,9 @@ export default function Collection() {
     <div className="min-h-screen bg-cream pb-4 px-4 pt-12 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <img src="/brand/logo-horizontal.png" alt="Nutri Dia" className="w-32" />
-        <div className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center">
-          <UserIcon className="text-sage" size={22} />
-        </div>
+        <button onClick={() => navigate('/profile')} className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center">
+          <BellIcon className="text-sage" size={22} />
+        </button>
       </div>
 
       <h1 className="text-3xl font-heading font-bold text-carbon">Colección</h1>

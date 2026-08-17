@@ -13,7 +13,7 @@ import {
   ClipboardIcon,
   RefreshIcon,
   ChevronRightIcon,
-  UserIcon,
+  BellIcon,
 } from '@/components/Icons'
 
 const DAYS = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'] as const
@@ -126,9 +126,9 @@ export default function WeeklyPlan() {
           <img src="/brand/logo-horizontal.png" alt="NutriDia" className="w-32" />
           <button
             onClick={() => navigate('/profile')}
-            className="w-10 h-10 rounded-full bg-mint-light flex items-center justify-center text-sage"
+            className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center text-sage"
           >
-            <UserIcon size={20} />
+            <BellIcon size={20} />
           </button>
         </div>
       </header>

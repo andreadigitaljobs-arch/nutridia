@@ -69,7 +69,7 @@ export default function Profile() {
   }, [profile?.user_id])
 
   return (
-    <div className="min-h-screen bg-cream pb-4 px-4 pt-4 animate-fade-in">
+    <div className="min-h-screen bg-cream pb-4 px-4 pt-12 animate-fade-in">
       <div className="flex items-center justify-between mb-8">
         <img src="/brand/logo-horizontal.png" alt="Nutri Dia" className="w-32" />
         <div className="relative cursor-pointer" onClick={() => alert('Proximamente')}>

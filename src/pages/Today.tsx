@@ -14,7 +14,7 @@ import {
   MoonIcon,
   PlantIcon,
   ChevronRightIcon,
-  UserIcon,
+  BellIcon,
   BowlIcon,
   EggIcon,
   HeartIcon,
@@ -280,14 +280,14 @@ export default function Today() {
 
   return (
     <div className="min-h-screen bg-cream pb-4 animate-fade-in">
-      <header className="bg-white border-b border-card-border sticky top-0 z-10">
+      <header className="bg-cream border-b border-card-border/50 sticky top-0 z-10">
         <div className="px-4 py-4 flex items-center justify-between">
           <img src="/brand/logo-horizontal.png" alt="NutriDia" className="w-32" />
           <button
             onClick={() => navigate('/profile')}
-            className="w-10 h-10 rounded-full bg-mint-light flex items-center justify-center text-sage"
+            className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center text-sage"
           >
-            <UserIcon size={20} />
+            <BellIcon size={20} />
           </button>
         </div>
       </header>
