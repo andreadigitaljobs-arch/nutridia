@@ -35,12 +35,24 @@ const COMMON_RESTRICTIONS = [
 ]
 
 const COMMON_FOODS_FALLBACK = [
-  'Pollo', 'Res', 'Cerdo', 'Pescado', 'Tofu', 'Huevo',
-  'Arroz', 'Pasta', 'Pan', 'Papa', 'Camote', 'Avena',
-  'Manzana', 'Plátano', 'Naranja', 'Fresa', 'Mango', 'Uva',
-  'Aguacate', 'Aceite de oliva', 'Nuez', 'Almendra', 'Mantequilla',
-  'Lechuga', 'Tomate', 'Pepino', 'Brócoli', 'Zanahoria', 'Espinaca',
-  'Leche', 'Yogurt', 'Queso', 'Atún', 'Frijol', 'Lenteja',
+  'Res', 'Chuleta de cerdo', 'Chuleta ahumada', 'Pavo', 'Pollo',
+  'Atun', 'Merluza', 'Salmon', 'Camaron', 'Pulpo',
+  'Huevo entero', 'Jamon de pollo', 'Jamon de pavo',
+  'Palmita', 'Requeson', 'Ricota', 'Bufula', 'Queso cabra',
+  'Corn flakes sin azucar', 'Galleta de arroz', 'Pan pita integral', 'Pan integral',
+  'Cachapas', 'Cotufa sin grasa', 'Galleta de soda', 'Kraker bran', 'Mazorca',
+  'Pan arabe', 'Pan frances', 'Pan blanco', 'Pan campesino', 'Pan perro/hamburguesa',
+  'Yuca', 'Papa', 'Ocumo', 'Batata', 'Platano', 'Pasta', 'Arroz', 'Avena',
+  'Caraota', 'Lenteja', 'Arvejas', 'Garbanzo', 'Casabe', 'Harina de trigo',
+  'Fresa', 'Mora', 'Mandarina', 'Pera', 'Melocoton', 'Manzana', 'Naranja',
+  'Durazno', 'Parchita', 'Guanabana', 'Pina', 'Cambur manzano', 'Cambur guineo',
+  'Melon', 'Patilla', 'Lechosa', 'Uvas', 'Mango', 'Guayaba',
+  'Berenjena', 'Zanahoria', 'Brocoli', 'Calabacin', 'Champiñon',
+  'Esparragos', 'Remolacha', 'Repolla', 'Coliflor',
+  'Lechuga', 'Tomate', 'Cebolla', 'Pepino', 'Aguacate',
+  'Aceite de oliva', 'Aceite de coco', 'Almendra', 'Mani', 'Nuez', 'Pistacho',
+  'Leche descremada', 'Leche deslactosada', 'Leche de almendra',
+  'Agua de coco', 'Jugo de naranja',
 ]
 
 interface OnboardingData {
@@ -152,22 +164,14 @@ export default function Onboarding() {
   const next = () => { setStep((s) => Math.min(s + 1, 7)); setStepKey(k => k + 1) }
   const prev = () => { setStep((s) => Math.max(s - 1, 1)); setStepKey(k => k + 1) }
 
-  const [dbFoods, setDbFoods] = useState<string[]>([])
+  const [dbFoods, setDbFoods] = useState<string[]>(COMMON_FOODS_FALLBACK)
   useEffect(() => {
-    supabase.from('foods').select('name').order('name').then(({ data: foods, error }) => {
-      if (error) {
-        console.error('Error fetching foods:', error)
-        setDbFoods(COMMON_FOODS_FALLBACK)
-        setData(d => ({ ...d, allowed_foods: COMMON_FOODS_FALLBACK }))
-        return
-      }
-      if (foods && foods.length > 0) {
+    setData(d => ({ ...d, allowed_foods: COMMON_FOODS_FALLBACK }))
+    supabase.from('foods').select('name').order('name').then(({ data: foods }) => {
+      if (foods && foods.length > COMMON_FOODS_FALLBACK.length) {
         const names = foods.map(f => f.name)
         setDbFoods(names)
         setData(d => ({ ...d, allowed_foods: names }))
-      } else {
-        setDbFoods(COMMON_FOODS_FALLBACK)
-        setData(d => ({ ...d, allowed_foods: COMMON_FOODS_FALLBACK }))
       }
     })
   }, [])
