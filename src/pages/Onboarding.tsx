@@ -189,7 +189,6 @@ export default function Onboarding() {
 
     try {
       const { error: profileErr } = await supabase.from('profiles').upsert({
-        id: user.id,
         user_id: user.id,
         name: data.name,
         date_of_birth: data.date_of_birth ? data.date_of_birth.split('/').reverse().join('-') : null,
@@ -197,7 +196,7 @@ export default function Onboarding() {
         height_cm: data.height_cm ? Number(data.height_cm) : null,
         current_weight_kg: data.current_weight_kg ? Number(data.current_weight_kg) : null,
         has_completed_onboarding: true,
-      })
+      }, { onConflict: 'user_id' })
       if (profileErr) {
         console.error('Profile save error:', profileErr)
         setSubmitError('Error guardando perfil: ' + profileErr.message)
