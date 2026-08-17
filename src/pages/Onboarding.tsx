@@ -815,6 +815,8 @@ function FoodTabStep({
   const [tab, setTab] = useState<'allowed' | 'prohibited' | 'limited'>('allowed')
   const [input, setInput] = useState('')
   const [search, setSearch] = useState('')
+  const [chipPage, setChipPage] = useState(0)
+  const PAGE_SIZE = 20
 
   const tabs = [
     { key: 'allowed' as const, label: 'Permitidos', list: 'allowed_foods' as const, activeBg: 'bg-sage text-white', inactiveBg: 'text-carbon/40' },
@@ -852,7 +854,7 @@ function FoodTabStep({
         {tabs.map((t) => (
           <button
             key={t.key}
-            onClick={() => { setTab(t.key); setInput(''); setSearch('') }}
+            onClick={() => { setTab(t.key); setInput(''); setSearch(''); setChipPage(0) }}
             className={`flex-1 h-10 rounded-lg text-sm font-medium transition-all ${
               tab === t.key
                 ? t.activeBg
@@ -908,21 +910,46 @@ function FoodTabStep({
       )}
 
       <div className="flex flex-wrap gap-2">
-        {currentList.map((food, i) => (
-          <span
-            key={food}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${chipBg[tab]}`}
-          >
-            {food}
-            <button onClick={() => removeFood(currentTab.list, i)} className="hover:opacity-70">
-              <XIcon className="h-3.5 w-3.5" />
-            </button>
-          </span>
-        ))}
+        {currentList.slice(chipPage * PAGE_SIZE, (chipPage + 1) * PAGE_SIZE).map((food, i) => {
+          const realIdx = chipPage * PAGE_SIZE + i
+          return (
+            <span
+              key={food}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${chipBg[tab]}`}
+            >
+              {food}
+              <button onClick={() => removeFood(currentTab.list, realIdx)} className="hover:opacity-70">
+                <XIcon className="h-3.5 w-3.5" />
+              </button>
+            </span>
+          )
+        })}
         {currentList.length === 0 && (
           <p className="text-sm text-carbon/30 py-2">No hay alimentos agregados aún.</p>
         )}
       </div>
+
+      {currentList.length > PAGE_SIZE && (
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={() => setChipPage(p => Math.max(0, p - 1))}
+            disabled={chipPage === 0}
+            className="h-8 w-8 rounded-lg border border-card-border bg-white flex items-center justify-center text-carbon/40 disabled:opacity-30 active:scale-95 transition-all"
+          >
+            <ChevronLeftIcon className="h-4 w-4" />
+          </button>
+          <span className="text-xs text-carbon/40 font-medium">
+            {chipPage + 1} / {Math.ceil(currentList.length / PAGE_SIZE)}
+          </span>
+          <button
+            onClick={() => setChipPage(p => Math.min(Math.ceil(currentList.length / PAGE_SIZE) - 1, p + 1))}
+            disabled={chipPage >= Math.ceil(currentList.length / PAGE_SIZE) - 1}
+            className="h-8 w-8 rounded-lg border border-card-border bg-white flex items-center justify-center text-carbon/40 disabled:opacity-30 active:scale-95 transition-all"
+          >
+            <ChevronRightIcon className="h-4 w-4" />
+          </button>
+        </div>
+      )}
     </div>
   )
 }
