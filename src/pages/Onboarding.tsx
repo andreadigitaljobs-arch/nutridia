@@ -157,6 +157,7 @@ export default function Onboarding() {
   const [step, setStep] = useState(1)
   const [data, setData] = useState<OnboardingData>(initialState)
   const [loading, setLoading] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   const update = (patch: Partial<OnboardingData>) => setData((d) => ({ ...d, ...patch }))
 
@@ -179,8 +180,12 @@ export default function Onboarding() {
   const totalMeals = Number(data.number_of_meals) || 3
 
   const handleSubmit = async () => {
-    if (!user) return
+    if (!user) {
+      setSubmitError('No hay sesion activa. Inicia sesion primero.')
+      return
+    }
     setLoading(true)
+    setSubmitError('')
 
     try {
       const { error: profileErr } = await supabase.from('profiles').upsert({
@@ -193,9 +198,17 @@ export default function Onboarding() {
         current_weight_kg: data.current_weight_kg ? Number(data.current_weight_kg) : null,
         has_completed_onboarding: true,
       })
-      if (profileErr) console.error('Profile save error:', profileErr)
-    } catch (e) {
+      if (profileErr) {
+        console.error('Profile save error:', profileErr)
+        setSubmitError('Error guardando perfil: ' + profileErr.message)
+        setLoading(false)
+        return
+      }
+    } catch (e: any) {
       console.error('Profile save exception:', e)
+      setSubmitError('Error inesperado: ' + (e?.message || String(e)))
+      setLoading(false)
+      return
     }
 
     try {
@@ -206,12 +219,13 @@ export default function Onboarding() {
         daily_calorie_target: data.daily_calorie_target ? Number(data.daily_calorie_target) : null,
         daily_water_target_ml: data.daily_water_target_ml ? Number(data.daily_water_target_ml) : null,
       })
-      if (planErr) console.error('Nutrition plan save error:', planErr)
+      if (planErr) {
+        console.error('Nutrition plan save error:', planErr)
+      }
     } catch (e) {
       console.error('Nutrition plan save exception:', e)
     }
 
-    // Save meal rules
     try {
       if (data.meal_rules.length > 0) {
         const { data: plan } = await supabase
@@ -242,7 +256,6 @@ export default function Onboarding() {
       console.error('Meal rules save exception:', e)
     }
 
-    // Save food rules
     try {
       const { data: foods } = await supabase.from('foods').select('id, name')
       const findFoodId = (name: string) => foods?.find(f => f.name === name)?.id || null
@@ -261,7 +274,6 @@ export default function Onboarding() {
       console.error('Food rules save exception:', e)
     }
 
-    // Save portions
     try {
       const { data: foods } = await supabase.from('foods').select('id, name')
       const findFoodId = (name: string) => foods?.find(f => f.name === name)?.id || null
@@ -760,6 +772,11 @@ export default function Onboarding() {
       </div>
 
       <div className="fixed bottom-0 inset-x-0 px-6 py-4 bg-cream z-50">
+        {submitError && (
+          <div className="mb-3 px-4 py-3 rounded-xl bg-coral/10 border border-coral/30 text-coral text-xs font-medium">
+            {submitError}
+          </div>
+        )}
         <div className="flex gap-3">
           {step > 1 && (
             <button
